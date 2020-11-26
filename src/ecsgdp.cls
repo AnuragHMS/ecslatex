@@ -11,7 +11,7 @@
 %% This file is part of the ECSDocs class distribution
 %% 
 \NeedsTeXFormat{LaTeX2e}[1996/12/01]
-\ProvidesClass{ecsgdp}
+\ProvidesClass{src/ecsgdp}
               [2003/25/04 v1.6
    LaTeX document class]
 \def\baseclass{book}
@@ -39,7 +39,7 @@
 \setmarginsrb           { 1.5in}  % left margin
                         { 0.6in}  % top margin
                         { 1.0in}  % right margin
-                        { 0.8in}  % bottom margin
+                        { 1.0in}  % bottom margin
                         {  20pt}  % head height
                         {0.25in}  % head sep
                         {   9pt}  % foot height
@@ -180,26 +180,35 @@
     \vskip 60\p@
     \begin{center}
       \setlength{\parskip}{0pt}
-      {\large\textbf{\UNIVNAME}\par}
+      {\large\textbf\DEPTNAME \par}
+      
       {\large \facname \par}
-      \vfill
-      {\large A \reporttype{} submitted for}
-      {\large the award of \par \degreename \par}
-      \vfill
-      {\normalsize Supervisor: \supname \par}
-      {\normalsize Examiner: \examname \par}
-      \vfill
-      \hspace{6mm}\parbox[t][51mm][s]{89mm}{
+      {\large{\univname}\par}
+      
+      
+      
+      \hspace{2mm}\parbox[t][81mm][s]{89mm}{
         \center
         \vfill
-        {\large \bf \@title \par}
-        \vfill
-        {\normalsize by \authornames \par}
-        \vfill
+        {\normalsize \bf \authornames \par}
+        
+        %\vfill
         {\normalsize \@date \par}
         \vfill
+       
+        {\large \bf \@title \par}
+        \vfill
       }
-      \parbox[t][95mm][s]{89mm}{}
+      \vfil
+      {\normalsize Project Supervisor: \supname \par}
+      {\normalsize Second Examiner: \examname \par}
+      \vfill
+      \vspace{10mm}
+      
+      {\large A \reporttype{} submitted for}
+      {\large \par the award of  \degreename \par}
+      
+      \parbox[t][70mm][s]{89mm}{}
     \end{center}
     \par
     \@thanks
@@ -220,6 +229,7 @@
 }
 \newenvironment{abstract}
 {
+  %\usepackage{titling}
   \btypeout{Abstract Page}
   \thispagestyle{empty}
   \null\vfil
@@ -231,12 +241,15 @@
     \bigskip
     {\normalsize \FACNAME \par}
     \bigskip
-    {\normalsize \underline{A \reporttype{} submitted for the award of \degreename}\par}
+    {\normalsize A \reporttype{} submitted for the award of \degreename   \par}
     \bigskip
-    {\normalsize\bf \@title \par}
+
+    {\large \bf Remote Monitoring Device of Patients Respiration Rates Outside of Hospitals \par}
+    
     \medskip
-    {\normalsize by \authornames \par}
+    {\normalsize by\\ \authornames \par}
     \bigskip
+    
   \end{center}
 }
 {
