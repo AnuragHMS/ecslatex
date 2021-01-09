@@ -1,0 +1,57 @@
+\section{Localised Processing, Storage and Classification}
+% Discuss Lambda functions deployed to the Edge and how they interact
+% Discuss how web server can see data throughout the greengrass
+% Discuss how AdvantEdge can help validate results within the model
+% 
+
+\subsection{Edge Node Design}
+For the Edge Node design, following the research into Edge Computing in Section \ref{edge_node_technologies} and seeing that AWS IoT Greengrass is a great solution to bringing Cloud Features to the edge, it was understood that we needed processing, network capabilities, and ability to work while not interrupting the user experience. 
+
+IoT Greengrass lets us do exactly that, IoT Greengrass is meant to be run on devices that support embedded Linux Systems, such as a Rasperry Pi, NVIDIA's Nano Jetson or Intels Atom Board to name a few. To show that our system works for any embedded system, the project places Greengrass onto a virtualised linux system running on x86\_64 architecture. However, support exists for many  other hardware architectures and OS's.
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1\linewidth]{pages/Chapter3/Chapter 3 images/greengrass_data_flow.png}
+    \caption{The data flow within the Local Environment for Edge Computing -\textit{ The full scale diagram can be seen in Appendix C} [\ref{appendix:greengrass_design}]}
+    \label{fig:greengrass_edge_design}
+\end{figure}
+
+From the design in Figure \ref{fig:greengrass_edge_design}, we can see how the system will function for 2 out of the 3 pipelines discussed earlier.
+\begin{enumerate}
+    \item Data is collected from the Router and stored in some (local) network data storage facility.
+    \item This data is then retrieved by the Extract Lambda function running at the Edge and is stored locally.
+    \item The Transform Lambda function will then begin the pre-processing of the data for usage and analysis.
+    \item The Load Lambda function takes the pre-processed data and transfers it to the S3 Pre-Processed-Data bucket on the cloud.
+    \item Pre-processed data is also taken to the ML-Inference Lambda function which uses an obtained ML Model from the Cloud for local classification of the data.
+    \item Pre-processed data is used and a request is sent to the cloud for classification. Timings between Local ML-Classification and Remote ML-Classification can be compared
+    \item All data is sent to a local web-server showing all timings and classifications being made by the functions described
+\end{enumerate}
+
+The first point is discussed earlier in Section \ref{data_collection_design} and how data can be collected. Point two discusses the extract function. The laptop and the edge node share a network folder within the the local environment. Data to be sent to the Edge Node will be placed into the shared folder by the laptop. In this case it is the raw data in the (.db) file format obtained from the router that is placed in the shared folder. The extract function will then take the database file and convert each data table within the database into its own JSON file.
+
+The third item discusses the transform function. This function \textit{compresses} all the JSON files that were extracted from the database file into a single array of all data elements corresponding to a single timestamp value as described in Section \ref{data_collection_design}. 
+
+The fourth item describes the load function. Since Edge nodes are often resource constrained in terms of hardware, either in processing power, memory available or data storage. It is often required to upload the data to the cloud upon good connectivity to ensure data is not lost and can be used for long-term analytics. The load function will then use API Gateway to securely send data to an S3 bucket to store the pre-processed data for any cloud-based processing and training of ML models. The load function allows for one of the two pipelines to be completed where data is transferred to the cloud via the Edge node rather than directly from the laptop. The sixth item is also a part of this pipeline where data can be sent to a cloud endpoint where Sagemaker has deployed a ML model to classify data. 
+
+The fifth item discusses using a deployed ML Model that runs on the local edge node. This model is developed on the cloud using data that has been collected previously for training and verification of the model. This model can then be deployed using Greengrass where the model can be taken from any S3 bucket and then transported to the edge node. More about the model development is discussed in Section \ref{cloud_services}.
+
+The final item in the list discusses the front-end of the Greengrass Edge node. This is a custom solution to being able to view all the data in real-time for analysis or for any OTT application to be built on top of. The data is passed around from each Lambda function using MQQT packets. Each Lambda function can subscribe to a topic. E.g. 'server/extract/data'. And on this topic, another Lambda function can publish a message for it to be read by the subscribers. These data packets can all be seen by viewers on the cloud and so other services via AWS SNS are able to subscribe to these topics and then react accordingly especially for data viewing or analytics. For this project however, a custom GUI has been designed therefore a custom OTT Application could be implemented a top of it.
+
+\subsection{AdvantEDGE}
+AdvantEDGE is a mobile edge emulation platform (MEEP) that runs on Docker and Kubernetes where all the micro-services interacted together were packaged in Docker containers before deploying in the Kubernetes pods to the AdvantEDGE for the edge scenarios testing. AdvantEDGE provides an emulation environment that enables experimentation on the edge computing technologies, applications and services. The platform facilitates exploring edge deployment models and their impact on applications and services in short and agile iterations. The user enables to define a scenario that includes:
+\begin{itemize}
+    \item A network topology of cloudlets, operators, wireless points of access (PoA), zones and UEs.
+    \item Network characteristics for each of the elements set up including latency, jitter, packet loss and data throughput.
+    \item Network and mobility events to change network characteristics and the location of UE and cloudlets during simulation run time. 
+\end{itemize}
+
+It allows the connection of real physical cloudlets and edge/fog/UE applications so that the simulation can capture the impact of the network design on its application performance. It also supports event scripting, collection of measurements in third parties such as an offline InfluxDB time series database and real time Grafana dashboards. AdvantEDGE platform and instrumented client load data into InfluxDB time series database where AdvantEDGE stores network and event measurements from deployed scenarios. Grafana dashboards were primarily used to monitor scenario execution and demonstration purposes. This combination makes it powerful platform for the edge network simulation.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=1\linewidth]{pages/Chapter3/Chapter 3 images/System Diagram.png}
+    \caption{The system diagram of edge application deployment to the AdvantEDGE}
+    \label{fig:AdvantEDGE_edge_design}
+\end{figure}
+
+Figure \ref{fig:AdvantEDGE_edge_design} shows the proposed system diagram of edge application deployment on the AdvantEDGE. The data collected from the router will be accessed to the VM through shared file, where python scripts will extract these data to convert from .dB into json files, then perform transform function to compress these json files into one before loading json file into ML model for evaluation. To be able to use the functionality of the mobile edge emulation platform, these python applications will need to be built as Docker images before deploying them as a native edge application.
+

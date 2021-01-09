@@ -13,7 +13,7 @@
 \NeedsTeXFormat{LaTeX2e}[1996/12/01]
 \ProvidesClass{src/ecsgdp}
               [2003/25/04 v1.6
-   LaTeX document class]
+                 LaTeX document class]
 \def\baseclass{book}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{\baseclass}}
 \def\@checkoptions#1#2{
@@ -244,7 +244,7 @@
     {\normalsize A \reporttype{} submitted for the award of \degreename   \par}
     \bigskip
 
-    {\large \bf Remote Monitoring Device of Patients Respiration Rates Outside of Hospitals \par}
+    {\large \bf Wireless Telemetry Pipelines and Localising ML Technologies\par}
     
     \medskip
     {\normalsize by\\ \authornames \par}

@@ -1,0 +1,77 @@
+%% ----------------------------------------------------------------
+%% Introduction.tex
+%% ---------------------------------------------------------------- 
+\chapter{Introduction} \label{Chapter:Introduction}
+
+This report documents the system development of an End-to-End wireless telemetry pipeline using the latest cloud and edge computing technologies, in order to accelerate wireless system research for Industry 4.0 use cases. Technologists use the term "Industry 4.0" to refer to the new Industrial Revolution centred around automation, interconnectivity, machine learning and real-time data \cite{industry4.0}, all of which will be utilised in this project. 
+
+\noindent Amazon Web Services (AWS) forms the primary cloud computing technologies for the system, utilising their data storage, data analytics, Internet of Things (IoT) edge runtime and machine learning services, while an 802.11ax Wi-Fi router operates as the wireless telemetry data source. Alongside this AdvantEdge \cite{AdvantEdge}, an agile mobile edge emulation platform, will be put-to-use in order to experiment with edge applications and network designs.
+
+\noindent This chapter will outline the project requirements set by the industrial partner, together with an overview of the system solution.  
+
+\section{Industrial Partner}
+
+InterDigital Europe Ltd is one of the world's largest pure research, innovation and licensing organisations \cite{interdigitalAbout}. The company develops fundamental wireless and video communication technologies that are at the core of mobile devices, networks and services worldwide. 
+
+\noindent In the last few decades wireless systems research has played an essential role in the advancement of wireless communications. InterDigital are now looking to take the next step in their research and innovation domain through the utilisation of readily available cloud computing solutions. \textcolor{red}{This project will serve as a demonstration in order for InterDigital to expand and accelerate their wireless research. }
+
+\subsection{InterDigital Contacts}
+
+\begin{itemize}
+  \item Filipe Conceicao
+  \item Ibrahim Hemadeh
+  \item Alain Mourad
+  \item Tezcan Cogalan
+\end{itemize}
+
+Mr Filipe Conceicao was the main point of contact and the InterDigital supervisor throughout the duration of this project.
+
+\section{Project Brief}
+\label{0_2_project_brief}
+This project proposes to develop an innovative End-to-End wireless telemetry pipeline. The system will consist of telemetry data being collected from an 802.11ax Wi-Fi router, or more specifically the ASUS ROG Rapture GT-AX11000 Tri-band Wi-Fi Gaming Router \cite{ASUSRouter} (provided by InterDigital), through which all avaliable telemetry data will be extracted from. The router will simulate a Wireless Access Point (WAP) and all possible telemetry data that the router allows to be extracted shall be considered in the development of the Machine Learning model. The Wi-Fi router will be connected to a laptop so as to simulate an edge node/IoT device, assist in data collection and bridge the AWS cloud and the Access Point (AP). 
+
+\noindent Amazon Web Services' cloud computing technologies shall be used to build storage solutions and machine learning models which will be applied to the telemetry data. The cloud model shall be design to be able to provide insights from the data storage solution and in real-time from the data stream. 
+
+\noindent An elementary Over The Top (OTT) application that serves the purpose of successfully demonstrating the work executed shall be envisioned at the later stages of the project.
+
+
+\section{Technical Objectives}
+
+The following technical goals were agreed upon after consultation with the academic
+supervisor and industrial partner (InterDigital).
+
+\subsection{Router data/transmission}
+
+\begin{itemize}
+  \item Data regarding Packet Requested, Stored, Dropped and Retired are sent from an edge-node to the AWS Cloud services. The data will be packed and configured to use the SigMF data-format.
+  \item An edge-node can be modelled as a laptop which is connected to an ASUS ROG AX11000, simulating a Wireless Access Point (WAP).
+  \item Each packet collected and sent to the Cloud services must have the data as well as meta-data related to the packet stored in JSON format following the ECMA-404 standard.
+\end{itemize}
+
+\subsection{AWS Data Lake and ML Tools}
+
+\begin{itemize}
+  \item Usage of Amazon S3 for Channel and Datastores for source and destination for usage of an AWS IoT
+Analytics Pipeline. Raw and processed data should be stored in these S3 Buckets.
+  \item Usage of AWS Analytics Pipeline activities for processing data from the Channel to ensure raw data from the router is usable by the ML Tools and Dashboard.
+  \item Usage of Amazon SageMaker tool with Python (Machine Learning service provided by the AWS).
+Supervised learning algorithms will be used to build, train and deploy machine learning models using the extracted and pre-processed telemetry data stored in Amazon S3.
+  \item Examples of supervised learning algorithms that will be used are XGBoost, Factorization Machine (FM), Linear learner, k-nearest neighbour (kNN) and Forecasting.
+\end{itemize}
+
+\section{Stretch Objectives}
+
+\subsection{Router data/transmission}
+
+\begin{itemize}
+  \item Production of a self-designed application to read and send data from ASUS ROG AX11000.
+  \item Add more edge nodes to the system and see how the OTT Application and ML Model can cope to
+balance loads to the server via queue utilisation and Router configurations. simulating a Wireless Access Point (WAP).
+\end{itemize}
+
+\subsection{AWS Data Lake and ML Tools}
+
+\begin{itemize}
+  \item Design and develop our own Dashboard to retrieve and display data.
+  \item Applying unsupervised learning algorithms to unknown data (if they do exist) to recognise the pattern and obtain new useful features.
+\end{itemize}

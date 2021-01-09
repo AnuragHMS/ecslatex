@@ -5,28 +5,38 @@
 \graphicspath{{./images/}}
 \hypersetup{colorlinks=true}
 \input{src/definitions}
+
+\usepackage[toc,page]{appendix}
+\usepackage{graphicx}
+\usepackage{tabto}
+\usepackage{color}
+\usepackage{lscape}
+\usepackage{listings}
+\newcounter{appendixcount}
+\newcommand{\newappendix}[2]{\setcounter{appendixcount}{#1}\addtocounter{appendixcount}{-1}{{#1: #2}}}
+
 %% ----------------------------------------------------------------
 \begin{document}
 \frontmatter
-\title      {Research into Wireless Telemetry for uses in Industry 4.0 built on Amazon Web Services Framework}
+\title      {Wireless Telemetry Pipelines and Localising ML Technologies\\}
 \authors	{
 {Anurag Sahare}\\
 {Eu Jin Ong}\\
 {Nazatul Syuhada Mohd Amran}\\
-{Akshay Nair}\\
+{Akshay Sudarsanan Nair}\\
 }
 \addresses  {\groupname\\\deptname\\\univname}
-\date       {December, 2020}
+\date       {January, 2021}
 \subject    {}
 \keywords   {}
-\supervisor {Dr Mohammed El-Hajir}
+\supervisor {Dr Mohammed El-Hajar}
 \examiner   {Dr Michael Ng}
 \degree     {Master of Engineering}
 \reporttype {Group Design Project Report} % Change here if you're doing a 3YP report
 \maketitle
 
 \begin{abstract}
-\include{0_Abstract}
+\include{pages/0_Abstract}
 \end{abstract}
 
 \tableofcontents
@@ -36,9 +46,9 @@
 
 %% ----------------------------------------------------------------
 % Optional extra pages
-%\listofsymbols{ll}{$w$ & The weight vector}
-%\acknowledgements{Here are some acknowledgements}
-%\dedicatory{To \dots}
+% \listofsymbols{ll}{$w$ & The weight vector}
+\acknowledgements{Thank Dr Mohammed and Filipe}
+% \dedicatory{To \dots}
 %% ----------------------------------------------------------------
 
 % \mainmatter means that we've gone from i, ii, iii, iv, v etc. introduction
@@ -46,20 +56,26 @@
 
 \mainmatter
 
-\include{00_Introduction}
-\include{1_Chapter1}
-\include{2_Chapter2}
-\include{3_Chapter3}
-\include{9_Conclusions}
-
+\include{pages/1_Introduction}
+\include{pages/2_Chapter2}
+\include{pages/3_Chapter3}
+\include{pages/4_Chapter4}
+\include{pages/5_Chapter5}
+\include{pages/6_Chapter6}
+\include{pages/7_Chapter7}
+\include{pages/8_Chapter8}
+\include{pages/9_Conclusions}
+%\include{pages/9_Conclusions}
+% include acknowledgements
 % \backmatter means that we've gone from 1,2,3,4,5 chapter numbering
 % to unnumbered bibliography/appendices.
 \backmatter
 
 \bibliographystyle{src/IEEEtran}
 \bibliography{master}
-\appendix
-\include{99_Appendix}
+% \appendix
+\include{pages/99_Appendix}
+\include{pages/appendixB}
 
 \end{document}
 

@@ -1,0 +1,341 @@
+\section{Cloud Based Processing, Storage and Inference}
+%Anurag's stuff
+\subsection{Telemetry Pipeline 1/3 - Triggering Lambda}
+\subsection{Pre-Processing Lambda}
+
+%Eu Jin's stuff
+\subsection{Data Analysis, Pre-processing and Feature Extraction} 
+
+Firstly, telemetry data set consisting about 800 data points from 3 different devices with different MAC addressed are used in the JSON file format. The bucket containing this data is loaded into the JupyterLab IDE provided by the Sagemaker service.
+ 
+From the telemetry data collected, data for the 5GHz-1 frequency will be investigated and analysed to be used to build the machine learning model. 
+The JSON file containing the data is loaded into a data frame as shown in fig. \ref{fig_df}. The columns in the data frame displays the telemetry data parameters of each channel existing in the 2.4GHz, 5GHz-1 and 5GHz-2 bands.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[scale=0.53]{pages/Chapter4/Chapter 4 Images/Dataframe.PNG}
+    \caption{Data frame of JSON file.}
+    \label{fig_df}
+\end{figure}
+
+There exists 8 channels under that particular frequency band which are channels 36, 40, 44, 48, 52, 56, 60 and 64. The parameters for channel 52 were filtered out and used as it is the most active and the other seven channels share the exact data values. Missing values in the dataset were also removed to ensure uniformity. The data throughput rate for the three devices  respectively were then obtained for analysis shown in fig. a \ref{fig_t3} and illustrated using a histogram. From observation of the data throughput rates, the device which is under the process of downloading a game shows the highest variation whereas there is little variation for the other two devices. Thus, the data throughput rate for the first device is filtered out to be used for further analysis. 
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[scale=0.9]{pages/Chapter4/Chapter 4 Images/Throughput.PNG}
+    \caption{Data Throughput rate for laptop, mobile phone and respectively}
+    \label{fig_t3}
+\end{figure}
+
+Next, a heatmap for the correlation matrix which shows the relationship between the parameters of the telemetry data is obtained as shown in fig. \ref{fig_Cmatrix}. 
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=14.5cm,height=15.2cm,keepaspectratio]{pages/Chapter4/Chapter 4 Images/Cmatrix.PNG}
+    \caption{Heatmap Correlation Matrix}
+    \label{fig_Cmatrix}
+\end{figure}
+
+The correlation coefficients were compared between each of the parameters with the data throughput rate. The coefficients were compiled and can be shown in table \ref{table:cc}. 
+
+\begin{table}[ht]
+\centering
+\begin{center}
+\begin{tabular}{ |c|c| } 
+  \hline
+ Parameters & Correlation coefficient , \textit{r}\\ 
+  \hline\hline
+ RSSI & -0.38\\ 
+ BADTX & 0.68\\ 
+ DOZE & -\\ 
+ GLITCH & -0.11\\ 
+ GOODTX & 0.93\\ 
+ INBSS & 0.59\\ 
+ NOCAT & 0.47\\ 
+ NOISE & 0.17\\\ 
+ NOPKT & -0.15\\ 
+ OBSS & 0.00\\ 
+ PLCP & -0.03\\ 
+ TX & 0.95\\ 
+ TXOP & -0.95\\ 
+ Packet Requested & 1.0\\ 
+ Packet Stored & 1.0\\  
+ Packet Dropped & -\\ 
+ Packet Retired & 0.81\\ 
+ Physical Rate & -0.29\\  
+ PS Retry & 0.14\\ 
+ \hline
+\end{tabular}
+\caption{Correlation coefficients between the parameters and data throughput rate}
+\label{table:cc}
+\end{center}
+\end{table}
+
+The parameters with coefficient values with intervals of $0.6\leq r \leq 1$ and $-1\leq r \leq -0.6$ are chosen as the features that will be used to train and build the machine learning model. These parameters are chosen as they hold a strong correlation with the data throughput rate which ranges from a moderate to a very strong linear relationship. Therefore, the parameters that will be used as features are as follows: 
+
+\begin{itemize}
+    \item GoodTX
+    \item BadTX
+    \item TX
+    \item TXOP
+    \item Packet Requested
+    \item Packet Stored
+    \item Packet Retired
+\end{itemize}
+ 
+Bar plots are obtained to show a better illustration of the relationship between the selected parameters on the y-axis and data throughput rate on the x-axis. The relationship between the packet requested, packet stored and packet retired with throughput is shown in fig \ref{fig_bp1}. From the plot, it can be seen that the three parameters increases with data throughput rate.
+Finally, the relationship between the BadTX and TXOP parameters with throughput rate is shown in fig. \ref{fig_bp3}.
+\begin{figure} [ht]
+    \centering
+    \includegraphics[scale = 0.52]{pages/Chapter4/Chapter 4 Images/Bplot1.PNG}
+    \caption{Barplot of Packet Requested, Stored and Retired against Data Throughput Rate}
+    \label{fig_bp1}
+\end{figure}
+
+Next, the relationship between the TX and GoodTX parameters with throughput rate is shown in fig. \ref{fig_bp2}. When the two parameters increase in value, the data throughput rate also increases.
+\begin{figure} [ht]
+    \centering
+    \includegraphics[width=14.6cm,height=200.0cm,keepaspectratio]{pages/Chapter4/Chapter 4 Images/Bplot2.PNG}
+    \caption{Barplot of GOODTX and TX against Data Throughput Rate}
+    \label{fig_bp2}
+\end{figure}
+
+Finally, the relationship between the BadTX and TXOP parameters with throughput rate is shown in fig. \ref{fig_bp3}. From the barplot obtained, the TXOP parameter decreases when the data throughput rate increases. On the other hand, the BadTX increases at a slow rate as the data throughput rate increases.
+\begin{figure} [ht]
+    \centering
+    \includegraphics[width=14.6cm,height=200.0cm,keepaspectratio]{pages/Chapter4/Chapter 4 Images/Bplot3.PNG}
+    \caption{Barplot of BADTX and TXOP against Data Throughput Rate}
+    \label{fig_bp3}
+\end{figure}
+
+After this analysis,the creation of the target variable (class) known as data throughput strength based on data throughput rate intervals was implemented and can be shown in table. \ref{table:class}. Five different classes are created such as very weak, weak, moderate, strong and very strong.
+
+\begin{table}[ht]
+\centering
+\begin{center}
+\begin{tabular}{ |c|c| } 
+ \hline
+ Data Throughput Rate/Mbps & Data Throughput Strength\\ 
+  \hline\hline
+ 0-9 & Very Weak\\ 
+ 10-19 & Weak\\ 
+ 20-29 & Moderate \\ 
+ 30-39 & Strong\\ 
+ 40 and above & Very Strong\\ 
+
+ \hline
+\end{tabular}
+\caption{Data Throughput Strength Class implementation based on Data Throughput Rate with 800 Data Points}
+\label{table:class}
+\end{center}
+\end{table}
+
+The seaborn library is used to produce a pairplot which shows the distribution between two features in different classes of data throughput strength implemented as shown in fig. \ref{fig_pp}. It also shows the distribution of each feature in the five different classes.
+
+\begin{figure} [ht]
+    \centering
+    \includegraphics[width=14.6cm,height=200.0cm,keepaspectratio]{pages/Chapter4/Chapter 4 Images/Pairplot.PNG}
+    \caption{SNS Pairplot}
+    \label{fig_pp}
+\end{figure}
+ 
+ From the testing phase in, the model has an accuracy of 89\% even though the it has a high accuracy during the validation phase. This problem occurs because there is too little data and causes overfitting even with the hyperparameters tuned. Thus, a data set containing approximately 6000 data points is collected. The data is preprocessed where the data throughput rate interval for each class were adjusted to accommodate higher rates. The updated interval for each data throughput strength class is shown in Table. \ref{table:class2}.
+ 
+\begin{table}[ht]
+\centering
+\begin{center}
+\begin{tabular}{ |c|c| } 
+ \hline
+ Data Throughput Rate/Mbps & Data Throughput Strength\\ 
+  \hline\hline
+0-9 & Very Weak\\ 
+10-29 & Weak\\ 
+30-49 & Moderate \\ 
+50-99 & Strong\\ 
+100 and above & Very Strong\\ 
+
+ \hline
+\end{tabular}
+\caption{Data Throughput Strength Class implementation based on Data Throughput Rate with 6000 Data Points}
+\label{table:class2}
+\end{center}
+\end{table}
+ 
+\subsection{Training and Validation of Machine Learning Model} 
+The features are then normalized and prepared to be used to train and build the machine learning model. A clearer workflow of the implementation of training, validating and testing the model is shown in Fig. \ref{fig_mlmodel}.
+
+\begin{figure} [ht]
+    \centering
+    \includegraphics[scale = 0.69]{pages/Chapter4/Chapter 4 Images/Work Flow.PNG}
+    \caption{Detailed Block Level Diagram of Machine Learning Model Development}
+    \label{fig_mlmodel}
+\end{figure}
+
+The dataset is split into a ratio of 70:20:10. 70\% of the data is used to train the model, 20\% of the data is used to validate the model and the remaining 10\% is used to test and evaluate the performance of the final machine learning model. 
+
+\subsubsection{k-Nearest Neighbour Algorithm with Scikit-Learn}
+The k-Nearest Neighbour supervised learning algorithm is used to build the model. The model is validated with the validation set after it is being trained. Several hyperparameters are tuned such as the number of neighbours, \textit{k} and the distance function to improve the performance of the trained model. The value of k is varied from 1 to 10 with two different distance functions which are the Euclidean and Manhattan functions. The performance of the trained model using the validation set is measured with the accuracy metric. The results are transferred into a table shown in Table \ref{table:euclidean} and Table \ref{table:manhattan} respectively.
+
+\begin{table}[ht]
+\centering
+\begin{center}
+\begin{tabular}{ |c|c| } 
+  \hline
+ The number of neighbors, k  & Accuracy/\%\\ 
+  \hline\hline
+1 & 95.9\\ 
+2 & 96.6\\ 
+3 & 95.9\\ 
+4 & 98.6\\ 
+5 & 96.6\\ 
+6 & 95.9\\ 
+7 & 97.3\\ 
+8 & 96.6\\\ 
+9 & 97.3\\ 
+10 & 95.9\\ 
+\hline
+\end{tabular}
+\caption{Accuracy of validated trained model using the Euclidean distance function }
+\label{table:euclidean}
+\end{center}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\begin{center}
+\begin{tabular}{ |c|c| } 
+  \hline
+ The number of neighbors, k  & Accuracy/\%\\ 
+  \hline\hline
+1 & 95.2\\ 
+2 & 98.6\\ 
+3 & 97.3\\ 
+4 & 98.6\\ 
+5 & 97.3\\ 
+6 & 97.3\\ 
+7 & 97.9\\ 
+8 & 97.9\\\ 
+9 & 97.3\\ 
+10 & 96.6\\ 
+
+ \hline
+\end{tabular}
+\caption{Accuracy of validated trained model using the Manhattan distance function}
+\label{table:manhattan}
+\end{center}
+\end{table}
+ 
+From the validation results with the Euclidean distance function , the \textit{k} value of 4 gives the best performance with an accuracy of 98.6\%. For the results with the Manhattan distance function, a \textit{k} value of also gives the same accuracy of about 98.6\%. Therefore, both distance functions with a \textit{k} value of 4 can be used to train the model and evaluate the model performance with the test data.
+
+
+Next, the model is retrained with the k-Nearest Neighbour algorithm using the 6000 data points collected. The hyperparameters were maintained and used in the training and validating phases. The results of the trained model with the validation set is recorded in Table \ref{table:euclidean2} and Table \ref{table:manhattan2} respectively.
+\begin{table}[ht]
+\centering
+\begin{center}
+\begin{tabular}{ |c|c| } 
+  \hline
+ The number of neighbors, k  & Accuracy/\%\\ 
+  \hline\hline
+1 & 97.8\\ 
+2 & 97.4\\ 
+3 & 98.2\\ 
+4 & 98.2\\ 
+5 & 98.3\\ 
+6 & 98.4\\ 
+7 & 98.6\\ 
+8 & 98.5\\ 
+9 & 98.6\\ 
+10 & 98.3\\ 
+\hline
+\end{tabular}
+\caption{Accuracy of validated trained model using the Euclidean distance function }
+\label{table:euclidean2}
+\end{center}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\begin{center}
+\begin{tabular}{ |c|c| } 
+  \hline
+ The number of neighbors, k  & Accuracy/\%\\ 
+  \hline\hline
+1 & 97.8\\ 
+2 & 97.5\\ 
+3 & 98.2\\ 
+4 & 98.1\\ 
+5 & 98.3\\ 
+6 & 98.3\\ 
+7 & 98.6\\ 
+8 & 98.5\\\ 
+9 & 98.4\\ 
+10 & 98.3\\ 
+
+ \hline
+\end{tabular}
+\caption{Accuracy of validated trained model using the Manhattan distance function}
+\label{table:manhattan2}
+\end{center}
+\end{table}
+
+\subsubsection{XGBoost Algorithm with Sagemaker Python SDK}
+Next, the built-in XGBoost supervised learning algorithm within Sagemaker is used to train the model. There are several steps required to prepare the data before training the model with the Sagemaker Python SDK. Firstly, the class of each data point has to be encoded with numeric values. The numeric values which represents each class is shown in Table \ref{table:class}. 
+The column containing the class (target variable) has to be moved to the first column in the dataframe with its name removed. The dataset is then converted and stored as a CSV file. The XGBoost algorithm version 1.2-1 is used for the model training. The hyperparameters used are shown in table \ref{table:xg}. After the model is trained, it will then be deployed with an endpoint being created. A variable will be created for the deployed trained model. This variable can then be used to validate the trained model using the validation data set. The accuracy obtained for the validated trained model is about 98.8\% for the dataset containing approximately 6000 data points.
+
+\begin{table}[ht]
+\centering
+\begin{center}
+\begin{tabular}{ |c|c| } 
+  \hline
+ Class  & Numeric Value\\ 
+  \hline\hline
+Moderate & 0\\ 
+Strong & 1\\ 
+Very Strong & 2\\ 
+Very Weak & 3\\ 
+Weak & 4\\ 
+
+ \hline
+\end{tabular}
+\caption{Numeric Representation for Each Class}
+\label{table:class}
+\end{center}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\begin{center}
+\begin{tabular}{ |c|c| } 
+  \hline
+Hyperparameters  & Values\\ 
+  \hline\hline
+Max depth & 4\\ 
+Learning rate (eta) & 0.2\\ 
+Gamma & 4\\ 
+Subsample & 0.5\\ 
+Number of rounds & 150\\ 
+
+
+ \hline
+\end{tabular}
+\caption{Hyperparameters for XGBoost Model}
+\label{table:xg}
+\end{center}
+\end{table}
+
+\subsection{Deploying Sagemaker Endpoint} 
+When the machine learning model is deployed, an endpoint will be created during the process which can be shown in Fig. \ref{fig_endpoint}. The endpoint has a name called ``sagemaker-xgboost-2020-12-22-20-52-53-943''. This endpoint of the trained model can be invoked using Amazon API Gateway and AWS Lambda where it can be used to predict or classify data. A Lambda function is first created to call the Sagemaker runtime invoke endpoint. During this stage, the policy of the IAM execution role is edited such that it gives permission to the Lambda function to invoke the model endpoint which can be shown in FIG.
+
+
+n  endpoint  will  be  created  automatically  once  the  model  is  deployed  in  Sagemaker.The endpoint created for the machine learning model can be invoked in the AWS cloudservice.  Using Amazon API Gateway and AWS Lambda services, the endpoint can beinvoked to allow the machine learning model to predict new data.  To do this, a Lambdafunction that calls model is first created.  An IAM execution role that includes a policy ischosen to give permission access to the Lambda function to invoke the model endpoint.An API gateway will then be created and deployed for the lambda function.  This APIwill trigger an event that invokes the Lambda function where it passes data.  Postman,an  HTTP  client  for  test  service  is  used  for  the  testing  phase  of  the  model  endpoint.An invoked URL provided will be entered onto Postman with the data included in it.The prediction results on the data passed into Postman by the ML model will then bedisplayed on the interface.
+
+\begin{figure} [ht]
+    \centering
+    \includegraphics[width=14.6cm,height=200.0cm,keepaspectratio]{pages/Chapter4/Chapter 4 Images/Endpoint.PNG}
+    \caption{Endpoint Creation}
+    \label{fig_endpoint}
+\end{figure}
+
+\section{Machine Learning Model}
+  
+% \section{Machine Learning Model Deployment}
