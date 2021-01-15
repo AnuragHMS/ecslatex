@@ -3,7 +3,8 @@
 %Need to discuss Lambda which takes raw data to pp data bucket here
 \subsection{Laptop to Cloud Pipeline}
 \subsubsection{API Gateway}
-In this section we discuss the entry way into the AWS Cloud. The API Gateway allows us to take any data produced the Edge location either from the end-user or the Edge nodes deployed and securely redirect them to storage and analysis endpoints. Figure \ref{fig:api_gateway_methods} shows how various URLs an be used to upload and send data to different buckets or endpoints. Usage of Sagemaker's endpoints are discussed later, but to get data from the edge to the cloud, the S3 endpoints are used by API Gateway. For example, doing a \textit{PUT} request to the provided URL from API Gateway, with the body of the request filled with the JSON object to be uploaded, would store the data file with the new Key value into the requested S3 bucket.
+\label{api_gateway_design}
+In this section we discuss the entry way into the AWS Cloud. The API Gateway allows us to take any data produced at the Edge location either from the end-user or the Edge nodes deployed and securely redirect them to storage and analysis endpoints. Figure \ref{fig:api_gateway_methods} shows how various URLs can be used to upload and send data to different buckets or endpoints. Usage of Sagemaker's endpoints are discussed later, but to get data from the edge to the cloud, the S3 endpoints are used by API Gateway. For example, placing a \textit{PUT} request to the API Gateway endpoint, with the body of the request filled with the JSON object to be uploaded, would store the JSON into the S3 bucket as required. 
 
 \begin{figure}[ht]
     \centering
@@ -20,7 +21,7 @@ Once the data has been prepared and the API Gateway setup, then Lambda services 
 \begin{figure}[ht]
     \centering
     \includegraphics[width=1\linewidth]{pages/Chapter3/Chapter 3 images/S3_to_Lambda_to_S3.png}
-    \caption{Triggering Lambda from S3 Uploads - \textit{The full scale diagram can be seen in Appendix E} [\ref{appendix:data_flow_from_laptop_to_cloud}]}
+    \caption{Triggering Lambda from S3 Uploads - The full scale diagram can be seen in Appendix \ref{appendix:data_flow_from_laptop_to_cloud}}
     \label{fig:s3_lambda_s3}
 \end{figure}
 
@@ -32,8 +33,7 @@ Firstly, the problem in building the machine learning model was identified from 
 \begin{figure}[ht]
     \centering
     \includegraphics[width=1\linewidth]{pages/Chapter3/Chapter 3 images/Ml.PNG}
-    \caption{Machine Learning Process Pipeline - \textit{Full scale diagram is in Appendix B} 
-      [\ref{appendix:ML process pipeline}]}
+    \caption{Machine Learning Process Pipeline - The full scale diagram can be seen in Appendix \ref{appendix:ML process pipeline}}
     \label{Machine Learning Process Pipeline}
 \end{figure}
 

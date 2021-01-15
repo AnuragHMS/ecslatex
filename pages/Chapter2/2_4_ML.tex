@@ -50,7 +50,7 @@ The training, validation and testing phases will be performed with the preproces
 K-nearest neighbour is a simple supervised learning algorithm that is frequently used for classification and regression problems. This algorithm works by simply storing the training dataset provided. It predicts or classifies a new data point by searching for the closest data points in the training data set - its ``nearest neighbors'' \cite{muller_guido_2016}.
 
 The hyperparameters that are used for this algorithm are the distance function and number of neighbours, k. The number of neighbours is a parameter which takes the \textit{k} closest training points in the model to predict or classify a given test point. A distance function is the measure of distance to map a training point to a test point. Several examples of distance functions used are the Manhattan, Euclidean and Minkowski distance functions. The Euclidean distance function is widely used and is said to represent the shortest distance between two points in a N-dimensional space. The corresponding function can be represented by the expression in 
-\ref{eq:2} where x represents the training point of the model, y represents a test point while n represents the dimension of the vector space (no. of features). 
+\ref{eq:2} \cite{knn} where x represents the training point of the model, y represents a test point while n represents the dimension of the vector space (no. of features). 
 \begin{equation}
     d(x,y) = \sqrt{(x_1^2-y_1^2)+(x_2^2-y_2^2)+....+(x_n^2-y_n^2)} \label{eq:2}
 \end{equation}
@@ -80,24 +80,30 @@ The final performance of the machine learning model will be evaluated using the 
     \label{fig_cf}
 \end{figure}
 
-From fig. \ref{fig_cf}, TP, FP, FN and TN represents true positive, false positve, false negative and true negative respectively. True positive and true negative represent data predicted correctly with the actual class while false positive and false negative are misclassified data predicted under the in incorrect class.
+From fig. \ref{fig_cf}, TP, FP, FN and TN represents true positive, false positive, false negative and true negative respectively. True positive and true negative represent data predicted correctly with the actual class while false positive and false negative are misclassified data predicted under the incorrect class.
 The accuracy of the model which represents the data are classified under the correct class can be evaluated with \ref{eq:3}.
 \begin{equation}
-    Accuracy(\%) = \frac{TP + TN}{TP+TN+FN+FP} X100\% 
+    Accuracy(\%) = \frac{TP + TN}{TP+TN+FN+FP} \times 100\% 
     \label{eq:3}
 \end{equation}
 
-Specificity measures the frequency of data predicted correctly under the negative actual class as shown in \ref{eq:4}. 
+Precision measures the frequency of data predicted correctly under the positive class as shown in \ref{eq:4} \cite{metrics}. For instance, a precision value of 0.7 defines that when the classifier predicts a data point under the true positive class, it has a 70\% chance of classifying it correctly.
 \begin{equation}
-    Specificity(\%) = \frac{TN}{FP+TN} X100\% 
+    Precision(\%) = \frac{TP}{TP+FP} \times100\% 
     \label{eq:4}
 \end{equation}
 
-Sensitivity shows the data correctly under the positive class and can be computed  with \ref{eq:5}.
+Sensitivity shows the proportion of data classified correctly under the positive class and can be computed  with \ref{eq:5} \cite{metrics}. It is also known as recall. For example, a recall value of 0.9 would mean that the classifier correctly predicts 90\% of the true positive class. 
 \begin{equation}
-    Sensitivity(\%) = \frac{TP}{TP+FN} X100\% 
+    Sensitivity(\%) = \frac{TP}{TP+FN} \times100\% 
     \label{eq:5}
 \end{equation}
+
+F1-score is a function of precision and recall where it is a metric which provides balance between those two parameters. Since a good performing model would have high precision and recall, this metric summarizes them together into a single value. The F1-score is calculated as shown in \ref{eq:6} \cite{metrics}.
+\begin{equation}
+   F1-score = \frac{2\times Precision\times Recall}{Precision+Recall} \times100\% 
+    \label{eq:6}
+\end{equation} 
 
 Thus, the confusion matrix is one of the several useful metrics to determine the performance of a machine learning model before getting it ready for deployment.
 

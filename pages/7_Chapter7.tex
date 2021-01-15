@@ -1,3 +1,28 @@
-\chapter{Future Work} \label{Chapter:Future Work}
+% Eu Jin and Syuhada to PR here
+
+\chapter{Future Work} \label{Chapter:Future Work} %Akshay to write mainly here
+
+This section discusses briefly any future work that the team would have liked to have completed if more resources and time were available for the project, allowing for the project specification to be completed better and also to further the research that InterDigital have been conducting as part of this GDP.
+
+The future of the data retrieval section of this project is to be able to SSH into the router through the edge node, rather then the current solution which uses the laptop connected to router. This addition would enable the laptop to be taken out of the wireless telemetry pipeline altogether with the data retrieval and all other data conversion processes being handled solely by the edge nodes. 
+
+%Anurag to talk about the scalability solution
+A future development for the Edge Nodes is the ability to deploy Edge nodes to new environments immediately. With the ability to run a single script on the Edge Device and have it setup everything necessary. Upon this deployment, Greengrass would run and have everything setup and ready. Currently this must still be done manually while following the implementation and User Manual.
+
+The next development to be made for the Edge node layer, is to have new models be developed per environment they were setup in, as opposed to using Data generated in only one environment and make the assumption that the data set would fit accurately (which does not make for a good solution in scalability). Each ML-Model should be developed for the environment it is to be deployed into. To this end, research must be conducted into automatic and incremental model development based on collected data and then deployed to the S3 Bucket for the Greengrass Group to use. 
+
+%Akshay to discuss router ssh configs
+
+A future implementation of the OTT application would be to take the ML classification and the incoming data stream in order to change the network settings of the router. Some router configurations have been discussed in Table \ref{tab:router_configuration}. There are many possibilities with the router configurations, for example using smart connect to dynamically switch the user to more appropriate frequencies or using Game Boost when there is high congestion to prioritise the packets of data from a certain device. This implementation would require further work with SSH router access, as this is the most feasible way of dynamically adjusting router configurations. 
+
+Since only data from the 5GHz-1 band was collected to train and build the classifier, data from the 2.4GHz and 5GHz-2 bands can be used as well to build the machine learning model. Data collection from the router can be carried out in different environments such as behind several obstacles. 
+
+More supervised learning algorithms can be explored to improve the performance of the classifier such as the factorization machine algorithm. The AWS Deep Learning service can also be used to build and train the machine learning model using the multi-layer Perceptron algorithm which can produce a more accurate classifier in return. Next, the retraining of the deployed model can also be done using step functions with several AWS services involved. This allows the deployed model to be reused to train incoming new data as well as deploying the retrained model to the endpoint.
 
 
+
+% Discuss here the usage of incremental model updates to deploy models for new and specific environments. Future work might also include using the same development style for other data from other technologies, like machine learning for imagery and other sensor data.
+%
+
+%Future work for the AdvantEDGE%
+The implementation of AdvantEDGE have yet to be accomplished. Further work should include \textit{dockerizing} Python application contained ETL functions into the Docker image, before deploying the application at the edge of the network through AdvantEDGE when configuring the elements as the network topology being built, connecting the network model to the real physical edge node. The behavior of the network model can be monitored further after the execution of the scenario under the influence of network characteristics. 

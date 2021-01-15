@@ -1,1 +1,61 @@
 \section{Data Analytics and the Over-the-Top Application}
+
+\subsection{Router Configuration}
+This section provides procedures in configuring the ASUS Rapture GT-AX11000 for the best possible performance especially in handling the Over-the-Top (OTT) application. Some basic configurations have been set up by default when the router was first booted. The basic configurations and setting up the router can be referred to the User Manual guide \cite{rog_2019}.
+
+Configuring the Professional - Wireless setting in the ASUSWRT will allow us to optimize the performance of ASUS Rapture GT-AX11000. Given in Table \ref{tab:router_configuration} are the settings recommended.
+
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{|p{3cm}|c|p{8cm}|}
+    
+    \hline
+    \textbf{Settings Option}   & \textbf{Recommendation} & \textbf{Description}  \\
+    \hline
+     Enable Radio  & Yes & Enables wireless networking. \\
+    \hline
+    Set AP Isolated & No & Favorable to enable when there are many guests on the network joining and leaving, enabling this will prevent devices from communicating to each other. \\
+    \hline
+    Roaming assistant & Enable & Disconnect the clients from the router when the signal is weak or under the threshold so that they can connect to the stronger signal available. \\
+    \hline
+    Enable IGMP Snooping & Enable & Preferable when there is a lot of multicast traffic but force the router to work harder, resulting in the poor performance of the router.\\
+    \hline 
+    Multicast Rate (Mbps) & Auto & Packs the messages to send them in the form of multicast to avoid collisions, improving the performance but a cost in the latency.\\
+    \hline
+    AMPDU RTS & Enable & Helps to deal congestion in the traffic. \\
+    \hline
+    RTS Threshold & 2347 & Advised to set at maximum value (which is 2347) if the router does not result to the poor transmission in the noisy environment. \\
+    \hline
+    DTIM Interval & 3 & For every 3 beacons, DTIM will be sent, setting this value high can optimize the battery life of the WiFi-connected device but router will have to buffer data which can cause issues. \\
+    \hline
+    Beacon Interval & 100 & Helps devices discover APs so they can switch between them, increasing this can improve the performance by saving bandwidth but makes it harder for devices to switch APs. \\
+    \hline
+    Enable TX Bursting & Enable & Improves the transmission speed between the wireless router and 802.11g devices.\\
+    \hline
+    Enable WMM APSD & Enable & Helps mobile devices save power. \\
+    \hline
+    Reducing USB 3.0 Interface & Disable & Only works best for 2.4GHz performance. Disable to increase USB 3.0 port’s transmission rate. \\
+    \hline
+    Optimize AMPDU aggregation & Disable & Aggregate data to improve performance at the expense of latency, can improve throughput but can be bad for gaming due to latency. \\
+    \hline
+    Airtime Fairness & Enable & Prevents slow devices from dominating the network but causes slow devices to be slower due to prioritization. \\
+    \hline
+    Explicit Beamforming & Enable & Estimates the channel and steer direction for the best wireless signal, router and device support. \\
+    \hline
+    Universal Beamforming & Disable & Router estimates direction of the data sent and received, and boosts the downlink speed only, turning this off may help Explicit beamforming work better. But may want to be careful about reducing range since this works with AiRadar. \\
+    \hline
+    Tx power adjustment & 100\% & Maximum power of radio transmission, covering the area around router/AP. \\ 
+    \hline
+    
+    \end{tabular}
+    \caption{Advance Settings on ASUS Rapture GT-AX11000 for better performance.}
+    \label{tab:router_configuration}
+\end{table}
+
+ASUS is the first to expose Smart Connect features and controls to the users, giving them access to configure it. Smart Connect is the feature which automatically steer clients to the most appropriate conditions and band that fit the best for users’ experiences. To maximize total wireless throughput use, there are two ways to set up the Smart Connect:
+\begin{enumerate}
+    \item Enabling the defult settings on Smart Connect, through \textbf{Advanced Settings} \textgreater \textbf{Wireless} \textgreater \textbf{General} tab.
+    \item Manually congfigure the settings on \textbf{Smart Connect Rule} tab on the Network Tools screen.
+\end{enumerate}
+
+To manually configure Smart Connect Rule, it is best to understand how the four main control components work. For better explanation and understanding, there is an article that can be referred to for reading \cite{higgins_2015}.

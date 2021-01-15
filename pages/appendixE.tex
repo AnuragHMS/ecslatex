@@ -1,0 +1,169 @@
+
+%\chapter{User Manual}
+\label{appendix:user_manual}
+
+%using Web GUI
+
+%Akshay stuff
+%How to SSH and SCP files out of Router
+
+%How to SSH via Python
+
+%How to send data to Cloud via requests lib in python
+%Anurag Stuff
+% \section{AWS Feature Setup}
+
+\begin{markdown}
+# User Manual 
+The User Manual provides step-by-step instruction for InterDigital and other developers to help in the most technically demanding sections of service deployments. Instructions for the ASUS ROG Router AX11000, Greengrass Group Setup and Deployment, Sagemaker and AdvantEdge are discussed.
+## Router Setup
+### Initial Startup
+- Plug router into power outlet and connect network cable from a modem into the LAN port of the [router](https://rog.asus.com/us/networking/rog-rapture-gt-ax11000-model/helpdesk_manual/). 
+- Connect to the network name (SSID) shown on the product label on the back of the router. 
+- Launch the ASUS web [GUI](http://router.asus.com).
+- Setup password for the router. 
+- Use Quick Internet Setup (QIS) and follow the instruction on screen to setup wireless network for each frequency band. 
+
+## Data Collection and Retrieval
+### SSH Setup
+- Go to the "Administration - System" section of the ASUS web GUI 
+    1. Enable Telnet
+    2. Enable SSH (LAN & WAN)
+    3. Change the SSH port to one within the recommended range (1025 to 65535). 
+    4. Allow password login
+    5. Apply setting changes
+- Check SSH works using [PuTTY](https://www.chiark.greenend.org.uk/~sgtatham/putty/)
+    1. On the session page, under "Host Name (or IP Address)"  enter "router.asus.com"
+    2. Change the port to the same as one set on ASUS router
+    3. Check "SSH" as the Connection Type 
+    4. On the SSH page, Check "2" for SSH Protocol Version
+    5. Open the connection
+    6. Enter router login credentials 
+### Start Data Collection Procedure
+- Start data collection on router
+    1. On the ASUS web GUI from the "Dashboard" navigate to to "Wifi Radar" then ["settings](http://router.asus.com/configure.asp)"
+    2. Select the desired sample interval, for this project 5 seconds is recommended
+    3. Change the database size limit to desired size
+    4. Check "stop data collection" for Once Database size reaches maximum limit
+    5. Start data collection 
+- Run the SSH data retrieval 
+    1. Edit the RouterSSH.py program to include the correct username, password and port.
+    2. Change the local path directories to desired locations, ensuring there is continuity between directory locations. 
+    3. Repeat same procedure for the LaptopToCloud.py program
+    4. Run and test the programs
+
+
+
+
+
+
+## AWS Services Setup - Cloud-Based
+### API Gateway - Entry point into all things AWS
+- First navigate to the API Gateway Dashboard in AWS
+- To setup new API:
+    1. Press the Orange Create API button
+    2. Select "Build REST API"
+    3. Provide API name, Description, and leave Endpoint-Type as Regional.
+    4. Click "Create API"
+- To use the API Gateway with S3:
+    1. As this section is a bit more hands on, the majority of the [guide](https://docs.aws.amazon.com/apigateway/latest/developerguide/integrating-api-with-aws-services-s3.html#api-as-s3-proxy-iam-permissions) provided by AWS can be followed. 
+    2. Specific mention should made to setting up the IAM Role with the correct permissions and also the *trust policy* setup.
+    3. The tutorial shows how to setup Get and Put requests to different paths at the API Gateway. 
+- To Deploy the API Gateway:
+    1. Under 'Actions' under the Resource tab, click "Deploy API". This will provide you with a URL to place put requests to.
+    
+### Lambda Services
+- Goto the Lambda Dashboard in AWS:
+- To setup a new Lambda function:
+    1. Select Orange 'Create Function'
+    2. Enter function name and runtime (e.g. Python)
+    3. Change IAM Role to one with required permissions (e.g. for S3 Read/Write Access)
+    4. Select 'Create' Function.
+- Lambda function can be setup at the top to be triggered by various services  (including S3 or SNS for mQTT packets)
+- In the Function Code setting, clicking the orange 'Deploy' button will let the new code run and be tested by test data (if applicable).
+
+## Edge-Based
+### AWS IoT Greengrass:
+- After the Virtual Machine has been setup or on the Edge Device, download and extract the Greegrass Group Core software package as provided by AWS[.](https://docs.aws.amazon.com/greengrass/latest/developerguide/what-is-gg.html#gg-core-download-tab).
+- Then run the following script on the VM:
+    1. wget -q -O ./gg-device-setup-latest.sh
+    https://d1onfpft10uf5o.cloudfront.net/greengrass-device-setup/downloads/gg-device-setup-latest.sh && chmod +x ./gg-device-setup-latest.sh && sudo -E ./gg-device-setup-latest.sh bootstrap-greengrass-interactive
+    2. Insert AWS Access Key, Secret Key, Session Token (if necessary), Region and Greengrass Group and Core name as necessary. Developer can also select to setup the Hello World Lambda function.
+    3. Upon succesful completion of the script, the Greengrass Daemon should already be running, in case it isn't or to restart it the following command can be ran.
+    4. sudo /greengrass/ggc/core/greengrassd
+    5. Note this assumes that you are in the ~/ directory with the greengrass core package downloaded and extracted there from earlier.
+- To deploy Lambda functions to Greengrass, navigate to the AWS IoT Core Dashboard. Select the Greengrass Tab, select Classic (v1), then select Groups. The deployed Group from earlier should be there.
+- In this Greengrass Dashboard, Lambda functions can be configured and attached, Local Resource Access can be configured, ML Models can be attached. Any subscriptions to allow the sending of MQTT packages from various Lambda functions or devices can also be set up.
+- To setup Lambda function in Greengrass Dashboard:
+    1. Go to the Lambdas within the Greengrass 
+    2. Click 'Add Lambda'
+    3. Choose 'Use-existing Lambda' (if you select new, it will ask you to make one).
+    4. Select your created Lambda and then choose the alias.
+- Setting up Greengrass Lambdas correctly:
+    1. All Lambdas that use the IoT Core features such as sending MQTT messages require the Greengrass SDK for the runtime. See the readme on the [github page](https://github.com/aws/aws-greengrass-core-sdk-python) for how to include this into the Lambda function.
+    2. The _greengrass-sdk_ folder, the program file, and any dependencies must be zipped together. These can then uploaded into the Lambda function for deployment.
+    3. Deploy the Lambda function and setup an alias to point to the most recently published version. Note, selecting _LATEST_ is not allowed and will cause the Greengrass Deployment to fail later.
+    4. Note any external dependencies or packages must also be included in the above zip folder. These must be copied from a host system as same as the environment to be deployed to. 
+        - E.g. To deploy the xgboost library, _pip install xgboost_ must be run on an x86_64 with UNIX OS before the libraries can be copied and zipped into the Lambda folder.
+
+
+
+
+## Cloud testing
+### Classifying/Predicting new data with deployed classifier using API Gateway and AWS Lambda:
+- After the machine learning model with a satisfying performance is deployed, an endpoint will be created.
+- This endpoint created allows users to invoke it on the cloud to predict/classify new data. 
+- One way use this model on the cloud is to make use of API Gateway and AWS Lambda.
+1. A Lambda function is first created where the steps to do this is explained on the Lambda services section.
+2. Next, navigate to the IAM services page on AWS. Choose an IAM role which was selected for the particular Lambda       function and edit the policy attached to it such that it gives permission to invoke the model endpoint.
+3. In the Lambda function created page, the environment variables is edited such that the endpoint name is included.
+4. The endpoint name of the model to be used can be found on the Sagemaker services page. On the left bar of the page    under inference, the `endpoints' option can be selected and the name of endpoints needed can be found there.
+5. Next,navigate to the API Gateway services page. Select \`Create API' then choose an \`API name' leaving the default     endpoint type as `Regional'.
+6. Under the \`Actions' option, select \`Create Resource'. Select the \`Create Method' to create a POST method.     \`Lambda function' is selected for integration type. The endpoint name should be entered on the \`Lambda function'.
+7. Under \`Actions', select \`Deploy API' to deploy the API that has been set up.
+8. Having both the API Gateway and Lambda function set up, Postman is used to
+   Enter the invoke URL produced during the deployment of API Gateway. The data to be classified will be placed on the \`Body' section. Enter the \`Send' option and the classification results of each data point will be displayed on the second `Body' section. The class of each data point will be represented with a numeric value. The numeric presentation of each class can be shown in the table below.
+\end{markdown}   
+
+\begin{table}[ht]
+\centering
+\begin{center}
+\begin{tabular}{ |c|c| } 
+  \hline
+ Class  & Numeric Value\\ 
+  \hline\hline
+Moderate & 0\\ 
+Strong & 1\\ 
+Very Strong & 2\\ 
+Very Weak & 3\\ 
+Weak & 4\\ 
+
+ \hline
+\end{tabular}
+\caption{Numeric Representation for Each Class}
+\label{table:class}
+\end{center}
+\end{table}
+\begin{markdown}
+- The full guide to this process can be found on the guide page provided by the
+[AWS](https://aws.amazon.com/blogs/machine-learning/call-an-amazon-sagemaker-model-endpoint-using-amazon-api-gateway-and-aws-lambda/).
+
+
+##AdvantEDGE
+- Step-by-step guide on installing AdvantEDGE can be found on [GitHub](https://github.com/InterDigitalInc/AdvantEDGE/wiki) provided by InterDigital. 
+- Once every instruction is done, AdvantEDGE web GUI can be accessed through the standard browser HTTP/HTTPS at port 80/443 using the node IP address. 
+- To be able to deploy the edge application to AdvantEDGE, the application needs to be packaged into Docker images. Provided was reference to dockerize [Python application](https://hub.docker.com/_/python). 
+- On the web GUI, the main page shown is the configuration page where the network scenario first created. To design a system’s scenario:
+
+    1. Select “New” on the *Configure* page, to create a new scenario.
+    2. On Network Element Configuration Pane, select “New” to choose the elements. Once chosen, the element will appear on the Network topology.
+    3. Through the same pane, apply network characteristics on each of the element; latency, data throughput, jitter. 
+    5. To connect the network model to the real physical nodes, detailed settings needed to be fill for the edge/fog/cloud/UE application on the Network Element Configuration Pane. Included are Docker image name, protocol, port, bash, arguments and many more. 
+    6. Once the button on the top right of the web GUI turns green, the scenario finally able to be executed, indicating all the micro-services and server are ready.
+    7. Go to *Execute* page and create a sandbox.
+    8. Click “Deploy” and select the scenario’s name previously created in the *Configure* page.
+    9. Once deployed, check the status of the scenario and applications deployed in the pod through Process Status Table at the bottom of the *Execution* page. If all the pods running, the network model is all good.
+    10.	On *Monitor* page, select “Source Node” and “Destination Node” to measure the network characteristics in between the nodes. The results will be displayed in Grafana dashboards.
+
+\end{markdown}
+

@@ -34,7 +34,7 @@ With Tampermonkey a userscript is to be created that periodically clicks the "Sa
 
 Selenium WebDriver is a web-based automation tool, the Python APIs allows for connection with a web browser of the users choice through which browser-based automation suites and tests can be easily created \cite{selenium}. In this project Selenium will be implemented to automate the data retrieval part of the telemetry pipeline, using the ASUS Web GUI. 
 
-Firstly, the Selenium working environment has to be setup, for this the package and a web-driver must be installed. The Google ChromeDriver web-driver will be the main interface as it provides capabilities for automated testing of webapps, navigation of web pages, JavaScript execution and much more. ChromeDriver version 87.0.4280.88 is used as this is the version associated with the Google Chrome Browser pre-installed on the work station. Then using ChromeDriver a new window is opened in order to access the desired web page, which in this case is the ASUS router login page (http://router.asus.com/Main\_Login.asp) as shown in Figure \ref{fig:ASUSLoginPage}. From this point the \textit{find\_element\_by\_id()} function is used to identify the username and password elements on the web page in order to login to the router. 
+Firstly, the Selenium working environment has to be setup, for this the package and a web-driver must be installed. The Google ChromeDriver web-driver will be the main interface as it provides capabilities for automated testing of webapps, navigation of web pages, JavaScript execution and much more. ChromeDriver version 87.0.4280.88 is used as this is the version associated with the Google Chrome Browser pre-installed on the work station. Then using ChromeDriver, a new window is opened in order to access the desired web page, which in this case is the ASUS router login page (http://router.asus.com/Main\_Login.asp) as shown in Figure \ref{fig:ASUSLoginPage}. From this point the \textit{find\_element\_by\_id()} function is used to identify the username and password elements on the web page in order to login to the router. 
 
 \begin{lstlisting}[language=Python, caption={ASUS Router Login Code Snippet (Selenium)}, label={lst:selenium}]
 login_user = driver.find_element_by_id('login_username')
@@ -50,9 +50,9 @@ login_pass.send_keys(PASSWORD)
     \label{fig:ASUSLoginPage}
 \end{figure}
 
-Now having logged into the ASUS router Web GUI, the next stage is to navigate into the Advanced Troubleshooting page (http://router.asus.com/configure.asp), which is where the data collection process is configured and from where the database file is downloaded. Then using the same procedure described in Section \ref{section:Tampermonkey}, the data collection process is started and the "exportdbbtn" is periodically clicked every 5 seconds using a \textit{while True} forever loop.
+Now having logged into the ASUS router Web GUI, the next stage is to navigate into the Advanced Troubleshooting page (http://router.asus.com/configure.asp), which is where the data collection process is configured and from where the database file is downloaded. Then using the same procedure described in Section \ref{section:Tampermonkey}, the data collection process is started and the "exportdbbtn" is periodically clicked every five seconds using a \textit{while True} forever loop.
 
-This method of data retrieval will automatically launch the ChromeDriver, login to the ASUS router Web GUi, navigate to the data collection configuration page and start the automatic download of the database file every 5 seconds. 
+This method of data retrieval will automatically launch the ChromeDriver, login to the ASUS router Web GUI, navigate to the data collection configuration page and start the automatic download of the database file every five seconds. 
 
 
 \subsubsection{Secure Shell (SSH)}
@@ -62,11 +62,11 @@ SSH is a network communication protocol that utilises encryption to secure the c
 \begin{figure}[ht]
     \centering
     \includegraphics[width=1\linewidth]{pages/Chapter4/Chapter 4 Images/PuttyFiles.png}
-    \caption{List of Computer Files on ASUS Router Using PuTTy}
+    \caption{List of Computer Files on ASUS Router Using PuTTY}
     \label{fig:PuttyAsusFiles}
 \end{figure}
 
-Next a Python Script that would run in the background of the laptop connected to the ASUS router, needed to be created. To establish an SSH connection to the router the package Paramiko \cite{Paramiko} is used as this allows implementation of the SSHv2 protocol for Python.
+Next a Python Script that would run in the background of the laptop connected to the ASUS router, needed to be created. To establish an SSH connection to the router, the package Paramiko \cite{Paramiko} is used as this allows implementation of the SSHv2 protocol for Python.
 
 \begin{lstlisting}[language=Python, caption={Paramiko SSH Client Python Code Snippet}, label={lst:paramiko}]
 ssh_client = paramiko.SSHClient()
@@ -74,7 +74,7 @@ ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 ssh_client.connect(host,port,username,password)
 \end{lstlisting}
 
-Then the SCP Python module \cite{scp} for Paramiko is used as this enables the transport of files between client and server via the SCP1 protocol. The SCPClient \textit{get.transport()} function is used to retrieve the database file every 5 seconds once again using a \textit{while True} loop.
+Then the SCP Python module \cite{scp} for Paramiko is used as this enables the transport of files between client and server via the SCP1 protocol. The SCPClient \textit{get.transport()} function is used to retrieve the database file every five seconds once again using a \textit{while True} loop.
 
 \begin{lstlisting}[language=Python, caption={SCP Client Python Code Snippet For Data Retrieval}, label={lst:SCP}]
 ssh_client.scp = SCPClient(ssh_client.get_transport())
@@ -92,7 +92,7 @@ Now with the data retrieval section of the telemetry pipeline established, the n
 
 With the aim of fully automating the data collection, retrieval and transformation portions of the wireless telemetry pipeline, and further the implementation of the data collection from the router (Section \ref{Section: Data collection from the Router}) there needs to be method for detecting when a new database file is downloaded. Once it has been detected that a new database file has been downloaded into a specified directory, the program should trigger the data transformation functions. 
 
-The implementation of this automatic file detection is conducted using the Watchdog Python API library which allows the system to monitor for file system events \cite{watchdog}. The process of creating a file system monitor to detect changes in a directory is as follows. First, an handler instance of the \textit{watchdog.observers.Observer} thread class is created. Then, a subclass of the \textit{watchdog.events.FileSystemEventHandler} is created. Next, the directory path to be monitored is set and scheduled using the event handler attached to the observer instance. Finally, the observer thread is started where it will wait an event to trigger further processes. 
+The implementation of this automatic file detection is conducted using the Watchdog Python API library which allows the system to monitor for file system events \cite{watchdog}. The process of creating a file system monitor to detect changes in a directory is as follows. First, a handler instance of the \textit{watchdog.observers.Observer} thread class is created. Then, a subclass of the \textit{watchdog.events.FileSystemEventHandler} is created. Next, the directory path to be monitored is set and scheduled using the event handler attached to the observer instance. Finally, the observer thread is started where it will wait an event to trigger further processes. 
 
 \begin{lstlisting}[language=Python, caption={Watchdog File System Event Handler Code Snippet}, label={lst:watchodog}]
 class Handler(FileSystemEventHandler):
@@ -112,7 +112,7 @@ class Handler(FileSystemEventHandler):
 
 As shown in the listing above when a new file is added to the directory being monitored, the funtion \textit{fileAdded()} is called. In this function the name of the latest file to be added is obtained using the Python modules glob and os. 
 
-\begin{lstlisting}[language=Python, caption={Getting The Latest File Name Code Snippet}, label={lst:watchodog}]
+\begin{lstlisting}[language=Python, caption={Getting The Latest File Name Code Snippet}, label={lst:latestFile}]
 def getLatestFileName():
     list_of_files = glob.glob('C:/Users/.../*.db')
     latest_file = max(list_of_files, key=os.path.getctime)
@@ -141,7 +141,7 @@ def create_connection(db_file):
 
 Having established the database connection, a cursor object is created (\textit{conn.cursor()}) so that its \textit{execute()} method can be called to perform SQL commands. Then a \textit{SELECT} statement is executed so as to access the data inside a specified datatable. Next, the method \textit{fetchall()} of the cursor object is called in order to retrieve all the data inside a datatable. 
 
-\begin{lstlisting}[language=Python, caption={SQLite3 Cursor Object and Its Execute and Fetchall Method Code Snippet}, label={lst:Connection Object}]
+\begin{lstlisting}[language=Python, caption={SQLite3 Cursor Object and Its Execute and Fetchall Method Code Snippet}, label={lst:Cursor Object}]
 cur = conn.cursor()
 cur.execute("SELECT *FROM RxCRSGlitches")
 rows = cur.fetchall()
@@ -168,7 +168,7 @@ with open('C:/Users/...', 'w') as outfile:
 %Anurag here
 \subsubsection{Data Compression of JSON Files}
 \label{data_compression}
-Once the data has been split up into 5 different JSON files after each relevant data table has been extracted. The python script in charge of compression works as shown by the block diagram in Figure \ref{fig:json_compression}. JSON files are retrieved and compressed into one JSON file for easier processing and transportation, while also removing any unnecessary data. It does this by retrieving each JSON file, generating a list of available MAC Addresses available and for each one, iterating through the data tables for 1 time stamp.
+Once the data has been split up into five different JSON files after each relevant datatable has been extracted. The Python script in charge of compression works as shown by the block diagram in Figure \ref{fig:json_compression}. JSON files are retrieved and compressed into one JSON file for easier processing and transportation, while also removing any unnecessary data. It does this by retrieving each JSON file, generating a list of available MAC Addresses and for each one, iterating through the data tables for one time stamp.
 \begin{figure}[ht]
     \centering
     \includegraphics[width=1\linewidth]{pages/Chapter4/Chapter 4 Images/json_compression.png}
@@ -184,9 +184,9 @@ The diagram in Figure \ref{fig:data_table_data} shows what data can be retrieved
 \end{figure}
 
 
-\subsection{Telemetry Pipeline 1/3 - Upload to Cloud Directly}
-The first pipeline method to be implemented is for the data to be taken from the laptop directly to the cloud. In this route an API Gateway is setup on the cloud as described in %\ref{}
-and data can be sent to it for data to be sent and stored securely to an S3 bucket for pre-processing. The API Gateway follows the RESTful framework described in \ref{fig:api_gateway_methods}
+\subsection{Telemetry Pipeline 1/3 - Upload to Cloud Directly} \label{Section:pipeline1/3}
+The first pipeline method to be implemented is for the data to be taken from the laptop directly to the cloud. In this route an API Gateway is setup on the cloud as described in Section \ref{api_gateway_design}
+and data can be sent to it and stored securely to an S3 bucket for pre-processing. The API Gateway follows the RESTful framework described in \ref{fig:api_gateway_methods}
 %DON@T FORGET TO FINISH REFERENCE HERE TO API GATEWAY IMPL. SECTIOn
 
 
@@ -200,7 +200,7 @@ Using the Put method under the URL \textit{s3://gdp2020rawdata/\{timestamp\}/\{i
     \item \{timestamp\}\_Datathroughput.json
 \end{itemize}
 Then an empty file is also uploaded to the cloud that also follows this pattern,\\ 
-\textit{\{timestamp\}.complete}, which will trigger the pre-processing Lambda function. This process was previously described in \ref{cloud_lambda}. Once the Lambda function is triggered by this .complete file, will complete the transform function described above in Section \ref{data_compression} and will store the pre-processed data or \textit{compressed} data into the S3 Bucket as \\\textit{s3://gdp2020ppdata/compresseddata/\{timestamp\}.json}.
+\textit{\{timestamp\}.complete}, which will trigger the pre-processing Lambda function. This process was previously described in \ref{cloud_lambda}. Once the Lambda function is triggered by the .complete file, it will begin its operation as described above in Section \ref{data_compression} and will store the pre-processed data or \textit{compressed} data into the S3 Bucket as \\\textit{s3://gdp2020ppdata/compresseddata/\{timestamp\}.json}.
 
 Using the Python \textit{requests} package \cite{python_requests_lib}, one can begin to upload as necessary using the following parameters:
 \begin{itemize}
@@ -219,6 +219,26 @@ response = requests.request("PUT", url=payload, headers=headers)
 print(response.status_code)
 print(response.text)
 \end{lstlisting}
+
+\subsubsection{Laptop-to-Cloud Direct Upload Timings}
+
+In order to directly compare the timings for the three different pipelines, the direct upload method has to be timed. This timing operation is broken down into three sections, time it takes to retrieve the database file, time to convert db file into the five separate JSON files and finally the time to upload the individual JSON files to the cloud storage. For this the Python time module is used with its \textit{time.time()} function implemented to record the start and end time of each operation. Then these time values are outputted onto a JSON file and placed in the shared directory of the edge node so it can be displayed in the web application for direct comparison. 
+
+\begin{lstlisting}[language=Python, caption={Laptop-to-Cloud Timing Code Snippet},
+label={lst:ltc code}]
+jsonTimings = { 	"loadDB": loadTime,
+                        "Extract": convertTime,
+                        "uploadJSONs": uploadTime,
+                        "totalTime": loadTime + convertTime + uploadTime
+                  }
+    
+    stringjsonTimings = json.dumps(jsonTimings)
+
+    with open ('C:/Users/.../timing.json', 'w') as outfile:
+        outfile.write(stringjsonTimings)
+\end{lstlisting}
+
+
 
 
 
